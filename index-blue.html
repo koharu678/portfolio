@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>冯千雅 | 个人作品集</title>
+
+  <!-- Tailwind CSS 浏览器编译版 CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+              800: '#1e40af', 900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ===== 全局基础 ===== */
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #F8FAFC;
+      color: #1E293B;
+      font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== 自定义滚动条 ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+    /* ===== 动画关键帧 ===== */
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Hero 渐变文字 ===== */
+    .hero-gradient {
+      background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 40%, #3B82F6 70%, #60A5FA 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 6s ease infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ===== 视频容器暗色底 + 底部渐变遮罩 ===== */
+    .video-container {
+      position: relative;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(15, 23, 42, 0.35) 100%);
+      pointer-events: none;
+    }
+
+    /* ===== PRD 弹窗 ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-container {
+      background: #FFFFFF;
+      border-radius: 16px;
+      width: min(900px, 92vw);
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+      transform: scale(0.95) translateY(16px);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .modal-overlay.active .modal-container { transform: scale(1) translateY(0); }
+
+    /* ===== 自定义 prose 排版（PRD 长文档） ===== */
+    .prose {
+      max-width: none;
+      color: #334155;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+    .prose h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 0;
+      margin-bottom: 0.75em;
+      letter-spacing: -0.02em;
+    }
+    .prose h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 2em;
+      margin-bottom: 0.75em;
+      padding-bottom: 0.5em;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .prose h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    .prose p { margin-top: 0.75em; margin-bottom: 0.75em; }
+    .prose strong { font-weight: 700; color: #1e293b; }
+    .prose a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+    .prose a:hover { color: #1d4ed8; }
+    .prose blockquote {
+      font-weight: 500;
+      font-style: italic;
+      color: #1e293b;
+      background: #f8fafc;
+      border-left: 4px solid #3b82f6;
+      padding: 0.75em 1em;
+      margin: 1.5em 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .prose blockquote p { margin: 0; }
+    .prose code {
+      font-weight: 600;
+      font-size: 0.875em;
+      background: #f1f5f9;
+      color: #1d4ed8;
+      padding: 0.2em 0.45em;
+      border-radius: 4px;
+    }
+    .prose pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      overflow-x: auto;
+      font-size: 0.85em;
+      line-height: 1.7;
+      margin: 1.5em 0;
+      border-radius: 10px;
+      padding: 1em 1.25em;
+    }
+    .prose pre code { background: none; color: inherit; padding: 0; font-size: inherit; font-weight: 400; }
+    .prose ul, .prose ol { margin-top: 0.75em; margin-bottom: 0.75em; padding-left: 1.5em; }
+    .prose li { margin-top: 0.35em; margin-bottom: 0.35em; }
+    .prose hr { border: none; border-top: 1px solid #e2e8f0; margin: 2em 0; }
+    .prose table {
+      width: 100%;
+      margin: 1.25em 0;
+      font-size: 0.875em;
+      line-height: 1.6;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    .prose thead { background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
+    .prose thead th {
+      font-weight: 700;
+      color: #1e293b;
+      padding: 0.75em 0.875em;
+      text-align: left;
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+    .prose tbody td {
+      padding: 0.65em 0.875em;
+      border-bottom: 1px solid #f1f5f9;
+      color: #475569;
+    }
+    .prose tbody tr:last-child td { border-bottom: none; }
+    .prose tbody tr:hover { background: #f8fafc; }
+
+    /* ===== 移动端适配 ===== */
+    @media (max-width: 640px) {
+      .prose { font-size: 0.85rem; }
+      .prose h1 { font-size: 1.4rem; }
+      .prose h2 { font-size: 1.1rem; }
+      .prose table { font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ==================== 导航栏（毛玻璃固定顶部） ==================== -->
+  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#hero" class="text-lg font-bold text-brand-700 tracking-tight">
+        Villy<span class="text-brand-400">.</span>
+      </a>
+      <!-- 桌面端导航链接 -->
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#about" class="text-gray-500 hover:text-brand-600 transition-colors">关于我</a>
+        <a href="#projects" class="text-gray-500 hover:text-brand-600 transition-colors">项目作品</a>
+        <a href="#contact" class="text-gray-500 hover:text-brand-600 transition-colors">联系方式</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== 首屏 Hero ==================== -->
+  <section id="hero" class="relative py-24 sm:py-32 overflow-hidden">
+    <!-- 背景装饰 -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-20 left-1/4 w-64 h-64 bg-blue-100/40 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-1/4 w-80 h-80 bg-brand-100/30 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative max-w-6xl mx-auto px-4 text-center">
+      <!-- 状态标签 -->
+      <p class="inline-block px-4 py-1.5 bg-white/80 rounded-full border border-slate-200 text-sm text-gray-500 mb-6">
+        🟢 开放求职中 · 可立即到岗
+      </p>
+
+      <!-- 姓名 -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight hero-gradient mb-4">
+        冯千雅
+      </h1>
+
+      <!-- 基本信息 -->
+      <p class="text-gray-500 text-base sm:text-lg mb-3">
+        22岁 &nbsp;|&nbsp; 本科学历 &nbsp;|&nbsp; 电子科技大学成都学院 &nbsp;|&nbsp; 财务管理
+      </p>
+
+      <!-- 一句话定位（限制宽度，不拉伸过宽） -->
+      <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+        致力于将严谨的<strong class="text-brand-700 font-semibold">财务核算逻辑</strong>
+        与极致的<strong class="text-brand-700 font-semibold">数字化产品体验</strong>相结合的复合型人才
+      </p>
+
+      <!-- CTA 按钮 -->
+      <div class="flex flex-wrap gap-3 justify-center mt-8">
+        <a href="#projects"
+           class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-lg
+                  hover:bg-brand-700 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+          <!-- 小图标：严格限制 w-5 h-5 -->
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/>
+          </svg>
+          查看作品集
+        </a>
+        <a href="#contact"
+           class="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-brand-600 text-brand-600 text-sm font-semibold rounded-lg
+                  hover:bg-blue-50 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+          联系我
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 关于我 ==================== -->
+  <section id="about" class="py-20 bg-white">
+    <div class="max-w-3xl mx-auto px-4">
+      <!-- 模块标题 -->
+      <div class="flex items-center gap-3 mb-10">
+        <div class="h-px flex-1 bg-gray-200"></div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 whitespace-nowrap">关于我</h2>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+
+      <div class="space-y-6">
+
+        <!-- 基本信息 -->
+        <div class="bg-slate-50 rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+          <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            基本信息
+          </h3>
+          <p class="text-gray-600 leading-relaxed">
+            冯千雅，22岁，本科学历，电子科技大学成都学院财务管理专业在读。
+          </p>
+        </div>
+
+        <!-- 个人技能 -->
+        <div class="bg-slate-50 rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+          <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+            个人技能
+          </h3>
+          <p class="text-gray-600 leading-relaxed">
+            持有初级会计资格证书，熟悉企业会计准则与财税基础，能独立完成日常账务处理及纳税申报。
+            熟练操作用友、金蝶等财务软件，精通 Excel 函数与数据处理，掌握 Power BI 基础可视化技能。
+            具备 AI 工具与业务分析相结合的 vibecoding 项目探索经验，包括使用 Claude Code、Codex 等辅助完成产品 PRD 撰写与原型搭建。
+          </p>
+        </div>
+
+        <!-- 实习经历 -->
+        <div class="bg-slate-50 rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+          <h3 class="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+            </svg>
+            实习经历
+          </h3>
+          <p class="text-xs text-gray-400 mb-3">中建四局第六建设有限公司安徽分公司 · 财务助理 · 2025/12 – 2026/03</p>
+          <div class="text-gray-600 text-sm leading-relaxed space-y-1.5">
+            <p>定期整理并清洗各项财务基础数据，协助编制多维度财务分析报告，为管理层及业务团队提供决策数据支持。</p>
+            <p>参与发票接收、审核与归档的流程改造，梳理业务线发票流转节点，识别并处理异常发票，规避潜在税务风险。</p>
+            <p>协助编制与审核月度会计凭证，参与月度及季度税务申报工作，确保税务合规与账目准确。</p>
+          </div>
+        </div>
+
+        <!-- 证书 -->
+        <div class="bg-slate-50 rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+          <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            证书
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200">初级会计资格证</span>
+            <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">日语 N2 证书</span>
+            <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 border border-slate-200">C1D 驾驶证</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 核心技能卡片 ==================== -->
+  <section class="py-20">
+    <div class="max-w-5xl mx-auto px-4">
+      <!-- 模块标题 -->
+      <div class="flex items-center gap-3 mb-10">
+        <div class="h-px flex-1 bg-gray-200"></div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 whitespace-nowrap">核心技能</h2>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+
+      <!-- 技能网格：上图标，下文字 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+        <!-- 卡片1：财务专业 -->
+        <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-center">
+          <div class="w-10 h-10 mx-auto mb-3 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-gray-900 mb-1">财务专业</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">持有初级会计资格证，熟悉用友、金蝶等财务软件操作</p>
+        </div>
+
+        <!-- 卡片2：数据分析 -->
+        <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-center">
+          <div class="w-10 h-10 mx-auto mb-3 bg-emerald-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-gray-900 mb-1">数据分析</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">精通 Excel 函数与数据处理，掌握 Power BI 基础可视化</p>
+        </div>
+
+        <!-- 卡片3：AI + 产品 -->
+        <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-center">
+          <div class="w-10 h-10 mx-auto mb-3 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-gray-900 mb-1">AI + 产品</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">AI 工具与业务分析结合的 vibecoding 实践，使用 Claude Code 等完成 PRD 撰写</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 项目作品 ==================== -->
+  <section id="projects" class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <!-- 模块标题 -->
+      <div class="flex items-center gap-3 mb-10">
+        <div class="h-px flex-1 bg-gray-200"></div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 whitespace-nowrap">项目作品</h2>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+
+      <!-- 项目卡片网格 -->
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <!-- ===== 卡片1：O2C 订单健康度系统 ===== -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
+          <!-- 视频区：aspect-video 16:9 严格比例 -->
+          <div class="video-container aspect-video">
+            <video src="video-sap-compressed.mp4" autoplay muted loop playsinline
+                   aria-label="SAP O2C 订单健康度系统演示"></video>
+          </div>
+          <!-- 文字内容区 -->
+          <div class="p-5 flex flex-col flex-1">
+            <!-- 标签 -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">业务分析</span>
+              <span class="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-purple-50 text-purple-700 border border-purple-200">可视化设计</span>
+            </div>
+            <!-- 标题 + 时间 -->
+            <h3 class="text-lg font-bold text-gray-900 mb-1">O2C 订单健康度自动化预警系统</h3>
+            <p class="text-sm text-gray-400 mb-3">2026/03 – 2026/04</p>
+            <!-- 描述 -->
+            <p class="text-gray-500 text-sm leading-relaxed mb-5 flex-1">
+              针对 SAP 销售订单从下单到回款全流程，设计并实现了异常自动识别与预警看板，覆盖回款逾期、异常未开票、未发货等核心风险场景。
+            </p>
+            <!-- 按钮 -->
+            <a href="https://koharu678.github.io/sap-health-monitor/" target="_blank"
+               class="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-lg
+                      hover:bg-brand-700 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              访问在线系统
+            </a>
+          </div>
+        </div>
+
+        <!-- ===== 卡片2：业财自助分析工具 ===== -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
+          <!-- 视频区：aspect-video 16:9 严格比例 -->
+          <div class="video-container aspect-video">
+            <video src="video-bi-compressed.mp4" autoplay muted loop playsinline
+                   aria-label="业财自助式多维度分析工具演示"></video>
+          </div>
+          <!-- 文字内容区 -->
+          <div class="p-5 flex flex-col flex-1">
+            <!-- 标签 -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">业务分析</span>
+              <span class="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-purple-50 text-purple-700 border border-purple-200">可视化设计</span>
+              <span class="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200">PRD</span>
+            </div>
+            <!-- 标题 + 时间 -->
+            <h3 class="text-lg font-bold text-gray-900 mb-1">业财自助式多维度分析工具</h3>
+            <p class="text-sm text-gray-400 mb-3">2026/04 – 2026/05</p>
+            <!-- 描述 -->
+            <p class="text-gray-500 text-sm leading-relaxed mb-5 flex-1">
+              独立完成从业务痛点调研到产品原型设计的全流程，输出完整 PRD 文档，支持拖拽上传、智能列识别与假设分析。
+            </p>
+            <!-- 按钮组 -->
+            <div class="flex flex-col sm:flex-row gap-3">
+              <a href="https://koharu678.github.io/financial-analytics/" target="_blank"
+                 class="inline-flex items-center justify-center gap-2 flex-1 px-4 py-2.5 border-2 border-brand-600 text-brand-600 text-sm font-semibold rounded-lg
+                        hover:bg-blue-50 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+                访问在线系统
+              </a>
+              <button onclick="openPRDModal()"
+                 class="inline-flex items-center justify-center gap-2 flex-1 px-4 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-lg
+                        hover:bg-brand-700 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                📄 查看完整PRD
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 联系方式 ==================== -->
+  <section id="contact" class="py-20">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <!-- 模块标题 -->
+      <div class="flex items-center gap-3 mb-10">
+        <div class="h-px flex-1 bg-gray-200"></div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 whitespace-nowrap">联系方式</h2>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+
+      <p class="text-gray-500 mb-8 max-w-md mx-auto">
+        如果你对我的经历感兴趣，欢迎随时联系我。
+      </p>
+
+      <!-- 联系卡片 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- 邮箱 -->
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div class="w-10 h-10 mx-auto mb-3 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <p class="text-xs text-gray-400 mb-1">邮箱</p>
+          <p class="text-sm font-semibold text-gray-800">2221601646@qq.com</p>
+        </div>
+        <!-- 微信 -->
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div class="w-10 h-10 mx-auto mb-3 bg-emerald-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M8 10.5h.01M12 10.5h.01M16 10.5h.01M9 16.5h6M21 12c0 4.97-4.03 9-9 9a9.04 9.04 0 01-4.5-1.17L3 21l1.17-4.5A9 9 0 013 12c0-4.97 4.03-9 9-9s9 4.03 9 9z"/>
+            </svg>
+          </div>
+          <p class="text-xs text-gray-400 mb-1">微信</p>
+          <p class="text-sm font-semibold text-gray-800">19383376626</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 页脚 ==================== -->
+  <footer class="py-8 border-t border-gray-100 bg-slate-50">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <p class="text-gray-400 text-sm">© 2026 冯千雅 &nbsp;|&nbsp; 期待与您的交流</p>
+    </div>
+  </footer>
+
+  <!-- ==================== PRD 弹窗 ==================== -->
+  <div id="prd-modal-overlay" class="modal-overlay" onclick="closePRDModal(event)">
+    <div class="modal-container" onclick="event.stopPropagation()">
+
+      <!-- 关闭按钮（吸顶） -->
+      <div class="sticky top-0 bg-white pt-3 pb-2 px-6 flex justify-between items-center z-10 border-b border-gray-100">
+        <span class="text-sm font-semibold text-gray-500">产品需求文档（PRD）</span>
+        <button onclick="closePRDModal()"
+                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-800 transition-all"
+                aria-label="关闭">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- PRD 正文（prose 排版） -->
+      <div class="px-6 sm:px-10 py-6 prose">
+
+        <h1>📋 产品需求文档（PRD）</h1>
+        <hr>
+
+        <h2>文档信息</h2>
+        <table>
+          <thead><tr><th>项</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><strong>文档版本</strong></td><td>v1.0</td></tr>
+            <tr><td><strong>产品名称</strong></td><td>财务自助分析看板（Financial Self-Service Analytics Dashboard）</td></tr>
+            <tr><td><strong>产品代号</strong></td><td>Project A2 — Analytics</td></tr>
+            <tr><td><strong>产品负责人</strong></td><td>Villy</td></tr>
+            <tr><td><strong>项目经理</strong></td><td>布布</td></tr>
+            <tr><td><strong>创建日期</strong></td><td>2026-07-12</td></tr>
+            <tr><td><strong>文档状态</strong></td><td>已交付</td></tr>
+          </tbody>
+        </table>
+        <hr>
+
+        <h2>1. 产品概述</h2>
+
+        <h3>1.1 产品愿景</h3>
+        <blockquote><p>让业务部门自己上传数据、自己筛选分析，财务不再需要重复出表。</p></blockquote>
+
+        <h3>1.2 一句话描述</h3>
+        <p>一款<strong>财务自助分析看板</strong>，业务部门拖拽上传 Excel/CSV 即可自动生成 KPI 摘要、趋势图、分类对比图和假设分析（敏感性分析），把财务从每周 2 小时的重复出表中解放出来。</p>
+
+        <h3>1.3 商业目标</h3>
+        <p>Villy 正在应聘财务 BP 岗位，JD 要求：数据处理能力、财务分析能力、数据决策思维、原型设计能力。本产品作为作品集的第二件，与项目一（SAP 订单健康度监控）构成完整的能力展示闭环：</p>
+        <table>
+          <thead><tr><th>项目</th><th>核心能力</th><th>JD 覆盖</th></tr></thead>
+          <tbody>
+            <tr><td>项目一：SAP 订单监控</td><td>异常监控（发现问题）</td><td>SAP、SQL、Power BI</td></tr>
+            <tr><td>项目二：财务自助分析</td><td>自助分析（辅助决策）</td><td>财务分析、数据决策、原型设计</td></tr>
+          </tbody>
+        </table>
+
+        <h3>1.4 核心叙事（面试故事线）</h3>
+        <blockquote><p>"原来财务每周花 2 小时给业务部门做重复报表 → 现在业务部门拖拽上传 Excel，工具自动识别数据结构并生成分析图表，加上假设分析滑块，业务部门能自己回答'如果价格涨 10%，利润会变多少'这类问题。"</p></blockquote>
+        <hr>
+
+        <h2>2. 目标用户</h2>
+        <h3>2.1 主要用户：面试官</h3>
+        <ul><li>扫码打开网页，30 秒内理解产品价值</li><li>拖入自己的 Excel 文件 → 自动出分析 → 留下深刻印象</li><li>拖动假设分析滑块 → 直观感受"数据决策思维"</li></ul>
+        <h3>2.2 次要用户：业务部门员工（设计目标）</h3>
+        <ul><li>不懂 SQL、不懂 BI 工具</li><li>有 Excel 数据，想看分析结果</li><li>不想每次找财务出表</li></ul>
+        <h3>2.3 辅助用户：财务 BP（Villy 面试角色的日常）</h3>
+        <ul><li>减少重复性出表工作</li><li>提供自助服务工具给业务部门</li><li>通过假设分析支持管理层决策</li></ul>
+        <hr>
+
+        <h2>3. 功能需求</h2>
+
+        <h3>3.1 文件上传模块</h3>
+        <p><strong>用户故事</strong>：作为业务人员，我想把我的 Excel 报表拖进系统，不需要任何配置就能看到分析结果。</p>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th><th>优先级</th></tr></thead>
+          <tbody>
+            <tr><td>UPL-01</td><td>支持拖拽上传和点击选择文件</td><td>P0</td></tr>
+            <tr><td>UPL-02</td><td>支持 <code>.csv</code> 格式（PapaParse 解析）</td><td>P0</td></tr>
+            <tr><td>UPL-03</td><td>支持 <code>.xlsx</code> / <code>.xls</code> 格式（SheetJS 解析，仅读取第一个 Sheet）</td><td>P0</td></tr>
+            <tr><td>UPL-04</td><td>上传成功提示：边框变蓝实线、图标变 ✅、显示文件名和记录数</td><td>P0</td></tr>
+            <tr><td>UPL-05</td><td>拖拽悬停反馈：边框变蓝、背景变浅蓝、图标放大</td><td>P1</td></tr>
+            <tr><td>UPL-06</td><td>解析中显示 spinner 加载动画</td><td>P1</td></tr>
+            <tr><td>UPL-07</td><td>文件大小限制 10MB，超出提示友好错误信息</td><td>P1</td></tr>
+            <tr><td>UPL-08</td><td>格式不支持时提示"仅支持 CSV 和 Excel 格式"</td><td>P1</td></tr>
+            <tr><td>UPL-09</td><td>文件为空时提示"文件无数据"</td><td>P2</td></tr>
+            <tr><td>UPL-10</td><td>上传新文件自动替换旧数据</td><td>P0</td></tr>
+          </tbody>
+        </table>
+
+        <h3>3.2 智能列识别引擎</h3>
+        <p><strong>用户故事</strong>：作为业务人员，我上传的 Excel 列名可能是中文的（"销售收入"）、英文的（"revenue"）、或者不标准的（"金额"），系统应该自动认出这列是干什么的。</p>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th><th>优先级</th></tr></thead>
+          <tbody>
+            <tr><td>COL-01</td><td>自动扫描 CSV/Excel 表头（第一行），按关键词匹配识别列角色</td><td>P0</td></tr>
+            <tr><td>COL-02</td><td>支持识别的列类型：日期、收入、成本、费用、分类、数量</td><td>P0</td></tr>
+            <tr><td>COL-03</td><td>支持中英文列名（如"销售收入"和"revenue"都识别为收入列）</td><td>P0</td></tr>
+            <tr><td>COL-04</td><td>大小写不敏感</td><td>P0</td></tr>
+            <tr><td>COL-05</td><td>识别失败时降级：用第一个数值列作为金额列</td><td>P1</td></tr>
+            <tr><td>COL-06</td><td>无日期列时降级：用行号分组（每 5 行一组）</td><td>P2</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>关键词匹配表</strong>：</p>
+        <table>
+          <thead><tr><th>识别目标</th><th>匹配关键词</th></tr></thead>
+          <tbody>
+            <tr><td>日期列</td><td>日期、月份、时间、期间、date、month、year、period</td></tr>
+            <tr><td>收入列</td><td>收入、营收、金额、销售收入、revenue、sales、amount、income</td></tr>
+            <tr><td>成本列</td><td>成本、cost、支出、营业成本</td></tr>
+            <tr><td>费用列</td><td>费用、expense、销售费用、管理费用、财务费用</td></tr>
+            <tr><td>分类列</td><td>产品、产品线、区域、地区、部门、客户、category、product、region、dept</td></tr>
+            <tr><td>数量列</td><td>数量、销量、件数、qty、quantity、unit、volume</td></tr>
+          </tbody>
+        </table>
+
+        <h3>3.3 KPI 摘要卡片</h3>
+        <p><strong>用户故事</strong>：作为用户，我上传数据后第一眼就能看到最重要的数字——总共多少收入、多少成本、毛利率多少。</p>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th><th>优先级</th></tr></thead>
+          <tbody>
+            <tr><td>KPI-01</td><td>卡片1：总收入 = sum(收入列)</td><td>P0</td></tr>
+            <tr><td>KPI-02</td><td>卡片2：总成本 = sum(成本列)</td><td>P0</td></tr>
+            <tr><td>KPI-03</td><td>卡片3：毛利率 = (收入-成本)/收入 × 100%，带颜色标识（>30% 绿、15-30% 橙、<15% 红）</td><td>P0</td></tr>
+            <tr><td>KPI-04</td><td>卡片4：费用率（有费用列时）或净利率（无费用列时降级）</td><td>P0</td></tr>
+            <tr><td>KPI-05</td><td>金额格式化：¥万为单位</td><td>P1</td></tr>
+            <tr><td>KPI-06</td><td>悬浮效果：translateY(-2px) 轻微上浮</td><td>P2</td></tr>
+          </tbody>
+        </table>
+
+        <h3>3.4 全局筛选栏</h3>
+        <p><strong>用户故事</strong>：作为业务人员，我想只看到华东区域的数据，或者只看 SAP S/4HANA 这个产品线的数据。</p>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th><th>优先级</th></tr></thead>
+          <tbody>
+            <tr><td>FLT-01</td><td>根据智能识别到的分类列，动态生成筛选下拉框</td><td>P0</td></tr>
+            <tr><td>FLT-02</td><td>下拉框选项从数据中自动提取唯一值并排序</td><td>P0</td></tr>
+            <tr><td>FLT-03</td><td>筛选后 KPI 卡片、图表、表格全部同步联动刷新</td><td>P0</td></tr>
+            <tr><td>FLT-04</td><td>默认显示"全部"，不应用任何筛选</td><td>P0</td></tr>
+          </tbody>
+        </table>
+
+        <h3>3.5 图表区</h3>
+        <p><strong>用户故事</strong>：作为用户，我想看到数据的趋势和不同分类的对比，不要看原始表格。</p>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th><th>优先级</th></tr></thead>
+          <tbody>
+            <tr><td>CHT-01</td><td>左图：月度收入/成本趋势图（柱状+折线混合，Chart.js）</td><td>P1</td></tr>
+            <tr><td>CHT-02</td><td>右图：分类毛利率对比图（横向条形图，颜色按盈利能力）</td><td>P1</td></tr>
+            <tr><td>CHT-03</td><td>图表随筛选栏联动更新</td><td>P0</td></tr>
+            <tr><td>CHT-04</td><td>图表随假设分析滑块联动更新</td><td>P0</td></tr>
+            <tr><td>CHT-05</td><td>无数据时显示空状态占位图</td><td>P1</td></tr>
+            <tr><td>CHT-06</td><td>鼠标悬停显示 tooltip（具体数值）</td><td>P1</td></tr>
+          </tbody>
+        </table>
+
+        <h3>3.6 假设分析模块 ⭐ 核心亮点</h3>
+        <p><strong>用户故事</strong>：作为业务管理者，我想知道"如果我们把价格提高 10%，利润率会变成多少？"——不需要财务帮我算，我拖动鼠标就知道答案。</p>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th><th>优先级</th></tr></thead>
+          <tbody>
+            <tr><td>WIF-01</td><td>价格调整范围滑块：-20% ~ +20%，步长 1%</td><td>P0</td></tr>
+            <tr><td>WIF-02</td><td>实时显示当前毛利率 vs 调整后毛利率</td><td>P0</td></tr>
+            <tr><td>WIF-03</td><td>实时显示当前利润 vs 调整后利润</td><td>P0</td></tr>
+            <tr><td>WIF-04</td><td>实时显示利润变动百分比（绿涨/红跌/灰色不变）</td><td>P0</td></tr>
+            <tr><td>WIF-05</td><td>KPI 卡片和图表随滑块联动更新</td><td>P0</td></tr>
+            <tr><td>WIF-06</td><td>滑块归零后恢复原始数据</td><td>P0</td></tr>
+            <tr><td>WIF-07</td><td>无收入列时显示"需要收入数据才能进行假设分析"</td><td>P2</td></tr>
+          </tbody>
+        </table>
+        <p><strong>计算逻辑</strong>：</p>
+        <pre><code>调整后收入 = 原始收入 × (1 + 调整比例)
+调整后利润 = 调整后收入 - 成本 - 费用
+调整后毛利率 = (调整后收入 - 成本) / 调整后收入</code></pre>
+
+        <h3>3.7 数据明细表</h3>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th><th>优先级</th></tr></thead>
+          <tbody>
+            <tr><td>TBL-01</td><td>表头根据上传文件的列动态生成</td><td>P0</td></tr>
+            <tr><td>TBL-02</td><td>搜索：实时过滤（输入即搜），含清除按钮</td><td>P1</td></tr>
+            <tr><td>TBL-03</td><td>排序：点击表头切换升序/降序</td><td>P1</td></tr>
+            <tr><td>TBL-04</td><td>分页：每页 15 条，含上一页/下一页导航</td><td>P1</td></tr>
+            <tr><td>TBL-05</td><td>CSV 导出：下载当前筛选+搜索结果为 CSV 文件</td><td>P1</td></tr>
+            <tr><td>TBL-06</td><td>数值列右对齐，金额格式化显示</td><td>P1</td></tr>
+            <tr><td>TBL-07</td><td>行 hover 高亮</td><td>P2</td></tr>
+          </tbody>
+        </table>
+        <hr>
+
+        <h2>4. 非功能需求</h2>
+        <h3>4.1 性能</h3>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th></tr></thead>
+          <tbody>
+            <tr><td>PER-01</td><td>页面首次加载 &lt; 3 秒（含 CDN 资源）</td></tr>
+            <tr><td>PER-02</td><td>1000 条以内数据解析 &lt; 200ms</td></tr>
+            <tr><td>PER-03</td><td>滑块拖动 → 数字刷新延迟 &lt; 100ms（感知为"实时"）</td></tr>
+            <tr><td>PER-04</td><td>CSV 导出 1000 条数据 &lt; 500ms</td></tr>
+          </tbody>
+        </table>
+        <h3>4.2 安全性</h3>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th></tr></thead>
+          <tbody>
+            <tr><td>SEC-01</td><td>所有数据处理在浏览器本地完成，不上传任何服务器</td></tr>
+            <tr><td>SEC-02</td><td>不依赖后端 API，纯前端静态文件</td></tr>
+            <tr><td>SEC-03</td><td>不上报任何用户行为数据</td></tr>
+          </tbody>
+        </table>
+        <h3>4.3 兼容性</h3>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th></tr></thead>
+          <tbody>
+            <tr><td>CMP-01</td><td>支持 Chrome（最新版）</td></tr>
+            <tr><td>CMP-02</td><td>支持 Edge（最新版）</td></tr>
+            <tr><td>CMP-03</td><td>移动端响应式：iPhone 12 及以上尺寸不溢出不重叠</td></tr>
+          </tbody>
+        </table>
+        <h3>4.4 可维护性</h3>
+        <table>
+          <thead><tr><th>需求 ID</th><th>描述</th></tr></thead>
+          <tbody>
+            <tr><td>MNT-01</td><td>单文件架构（index.html），无构建工具，直接编辑</td></tr>
+            <tr><td>MNT-02</td><td>CSS 变量体系（<code>:root</code>），修改配色只需改一处</td></tr>
+            <tr><td>MNT-03</td><td>全局状态对象（AppState），各模块读同一数据源</td></tr>
+          </tbody>
+        </table>
+        <hr>
+
+        <h2>5. 技术架构</h2>
+        <h3>5.1 架构图</h3>
+        <pre><code>┌──────────────────────────────────────┐
+│          浏览器（用户端）              │
+│                                      │
+│  ┌────────┐ ┌────────┐ ┌────────┐   │
+│  │ HTML   │ │ CSS    │ │ JS     │   │
+│  │ 骨架   │ │ Design │ │ 业务   │   │
+│  └────────┘ └────────┘ └────────┘   │
+│                 │                    │
+│        ┌────────┴────────┐          │
+│        │  AppState       │          │
+│        │  全局数据模型    │          │
+│        └────────┬────────┘          │
+│   ┌─────────────┼─────────────┐     │
+│   ▼             ▼             ▼     │
+│ ┌──────┐ ┌──────────┐ ┌───────┐    │
+│ │KPI   │ │图表      │ │表格   │    │
+│ │卡片  │ │Chart.js  │ │       │    │
+│ └──────┘ └──────────┘ └───────┘    │
+│   ▲             ▲             │     │
+│   └─────────────┼─────────────┘     │
+│             假设分析滑块             │
+└──────────────────────────────────────┘
+外部依赖（CDN）:
+  Chart.js  /  PapaParse  /  SheetJS</code></pre>
+
+        <h3>5.2 数据流</h3>
+        <pre><code>用户上传文件
+→ PapaParse / SheetJS 解析
+→ 智能列识别引擎（扫描表头 → 匹配关键词 → 标注列角色）
+→ 存入 AppState.rawData
+→ applyFilters() 应用筛选 → computeKPIs() 计算 KPI
+→ 同步刷新所有视图
+
+用户拖动假设分析滑块
+→ AppState.whatIf.priceAdjustment 更新
+→ computeKPIs() 重算
+→ 同步刷新所有视图</code></pre>
+
+        <h3>5.3 数据模型</h3>
+        <pre><code>AppState = {
+  rawData: [],           // 解析后的原始数据
+  columns: [],           // 列名列表
+  mapping: {             // 智能识别结果
+    dateCol: null,       // 日期列名
+    revenueCol: null,    // 收入列名
+    costCol: null,       // 成本列名
+    expenseCol: null,    // 费用列名
+    categoryCols: [],    // 分类列名列表
+  },
+  filters: {},           // 当前筛选条件
+  whatIf: { priceAdjustment: 0 },
+  filteredData: [],
+  kpi: { totalRevenue, totalCost, grossMargin, expenseRate, totalProfit },
+}</code></pre>
+        <hr>
+
+        <h2>6. 设计规范</h2>
+        <table>
+          <thead><tr><th>参数</th><th>值</th></tr></thead>
+          <tbody>
+            <tr><td>主色</td><td><code>#2563EB</code></td></tr>
+            <tr><td>成功/正常</td><td><code>#10B981</code></td></tr>
+            <tr><td>危险/告警</td><td><code>#EF4444</code></td></tr>
+            <tr><td>背景</td><td><code>#F8FAFC</code></td></tr>
+            <tr><td>卡片</td><td><code>#FFFFFF</code></td></tr>
+            <tr><td>卡片圆角</td><td><code>12px</code></td></tr>
+            <tr><td>卡片阴影</td><td><code>0 1px 3px rgba(0,0,0,0.08)</code></td></tr>
+          </tbody>
+        </table>
+        <hr>
+
+        <h2>7. 范围边界</h2>
+        <h3>7.1 本期包含（In Scope）</h3>
+        <ul><li>文件上传（CSV + Excel）</li><li>智能列识别</li><li>KPI 卡片 + 筛选 + 图表 + 假设分析 + 表格</li><li>响应式适配</li><li>GitHub Pages 部署</li></ul>
+        <h3>7.2 本期不包含（Out of Scope）</h3>
+        <ul><li>用户登录/权限管理</li><li>后端服务器/数据库</li><li>真实 Power BI REST API 对接</li><li>多语言支持</li><li>数据持久化存储</li></ul>
+        <hr>
+
+        <h2>8. 成功指标</h2>
+        <table>
+          <thead><tr><th>指标</th><th>目标</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>面试官 30 秒理解产品价值</td><td>✅</td><td>达成</td></tr>
+            <tr><td>上传陌生 Excel 自动出图</td><td>✅</td><td>达成</td></tr>
+            <tr><td>假设分析滑块实时联动</td><td>✅</td><td>达成</td></tr>
+            <tr><td>双浏览器兼容（Chrome + Edge）</td><td>✅</td><td>达成</td></tr>
+            <tr><td>移动端响应式不崩溃</td><td>✅</td><td>达成</td></tr>
+            <tr><td>GitHub Pages 扫码可访问</td><td>✅</td><td><a href="https://koharu678.github.io/financial-analytics/">链接</a></td></tr>
+          </tbody>
+        </table>
+        <hr>
+
+        <h2>9. 交付物</h2>
+        <pre><code>g:\项目二\
+├── index.html          ← 核心产品（单文件）
+├── README.md           ← GitHub 说明
+└── qrcode.png          ← 面试二维码
+
+G:\obsidian\项目二\项目二\
+├── 项目二-产品说明书.md
+├── 项目二-使用手册.md
+└── 未命名.md           ← 面试问答手册</code></pre>
+
+      </div><!-- /prose -->
+    </div><!-- /modal-container -->
+  </div><!-- /modal-overlay -->
+
+  <!-- ==================== JavaScript ==================== -->
+  <script>
+    /* ----- PRD 弹窗 ----- */
+    const prdOverlay = document.getElementById('prd-modal-overlay');
+
+    function openPRDModal() {
+      prdOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      // 弹窗容器滚回顶部
+      const container = prdOverlay.querySelector('.modal-container');
+      if (container) container.scrollTop = 0;
+    }
+
+    function closePRDModal(event) {
+      // 点击遮罩层才关闭（event.target 是 overlay 自身）
+      if (event && event.target !== prdOverlay) return;
+      prdOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // ESC 键关闭
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && prdOverlay.classList.contains('active')) {
+        closePRDModal();
+      }
+    });
+
+    /* ----- 平滑锚点滚动（补偿导航栏高度） ----- */
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          var navHeight = 56;
+          var top = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        }
+      });
+    });
+
+    /* ----- 导航栏阴影随滚动变化 ----- */
+    var nav = document.querySelector('nav');
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 20) {
+        nav.style.boxShadow = '0 1px 6px rgba(0,0,0,0.06)';
+      } else {
+        nav.style.boxShadow = 'none';
+      }
+    });
+
+    console.log('👋 你好！欢迎查看冯千雅的作品集。');
+  </script>
+
+</body>
+</html>
